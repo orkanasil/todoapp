@@ -1,14 +1,7 @@
 export const list = {
   state: {
     lists: [
-      {
-        id: 1,
-        text: 'Orkan'
-      },
-      {
-        id: 2,
-        text: 'Asil'
-      }
+    
     ]
   },
   getters: {
