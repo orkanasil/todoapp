@@ -1,20 +1,18 @@
 export const list = {
   state: {
-    lists: [
-    
-    ]
+    list: []
   },
   getters: {
     getList(state) {
-      return state.lists
+      return state.list
     }
   },
   mutations: {
     insertItem(state, payload) {
-      state.lists.unshift(payload)
+      state.list.unshift(payload)
     },
     deleteItem(state, id) {
-      state.lists.splice(id, 1)
+      state.list.splice(id, 1)
     },
     updateItem(state, payload) {
       state.list.forEach((element) => {

@@ -1,36 +1,36 @@
 <template>
     <div class="container rounded-5 bg-light shadow-lg p-5" style="width: 500px;">
         <div class="mb-4 d-flex justify-content-between">
-            <input v-model="inputText" @keydown.enter="addToList" type="text">
-            <button class="btn btn-primary" @click="addToList">Add to List</button>
+            <CustomInput v-model:value="inputText" />
+            <CustomButton class="proceed" @click="addToList">Add to List</CustomButton>
         </div>
         <ul class="list-group">
-            <li v-for="(listItem, index) in getList" :item="listItem" :key="index" class="list-group-item mt-4 border ">
-                <div v-if="isEditing && id === listItem.id" class="d-flex align-items-center justify content between w-100">
-                    <input type="text" v-model="updateInput">
-                    <button class="btn btn-success ms-5" @click="updatedItem(newListItem)">Update</button>
-
-                </div>
-                <template v-else>
-                    <div class="d-flex align-items-center justify content between w-100">
-                        {{ listItem.text }}
-                        <button class="btn btn-danger ms-auto " @click="deleteFromList(index)">Remove</button>
-                        <button class="btn btn-warning ms-2 text-light" @click="editItem(listItem)">Edit</button>
-                    </div>
-                </template>
-            </li>
+            <ListItem v-for="(listItem, index) in getList" :key="index" :listItem="listItem" :isEditing="isEditing"
+                :tempId="tempId" @delete-from-list="deleteFromList($event)" @edit-item="editItem($event)"
+                @updated-item="updatedItem($event)" />
         </ul>
     </div>
 </template>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
+import ListItem from "./ListItem.vue"
+import CustomButton from "./ui-components/CustomButton.vue";
+import CustomInput from "./ui-components/CustomInput.vue";
 import { mapGetters, mapActions } from 'vuex';
+
 export default {
+    components: {
+        ListItem,
+        CustomButton,
+        CustomInput
+    },
     data() {
         return {
             inputText: '',
             updateInput: '',
             isEditing: false,
+            tempId: '',
         }
     },
     computed: {
@@ -39,23 +39,36 @@ export default {
     methods: {
         ...mapActions(['insertListItem', 'deleteListItem', 'updateListItem']),
         addToList() {
-            this.insertListItem({
-                text: this.inputText
-            })
-            this.inputText = ''
+            const uid = uuidv4();
+            if (this.inputText.length <= 0) {
+                alert('Input can not be empty!')
+            }
+            else {
+                this.insertListItem({
+                    id: uid,
+                    text: this.inputText
+                })
+                this.inputText = ''
+                console.log('is add item functional')
+            }
+
         },
         deleteFromList(index) {
             this.deleteListItem(index, 1)
+            console.log('is delete funtional');
         },
         editItem(listItem) {
+
             const { id } = listItem
             this.isEditing = true,
-                this.id = id
+                this.tempId = id
+            console.log('is edit item functional');
         },
         updatedItem(newListItem) {
             this.updateListItem(newListItem)
             this.isEditing = false;
-            this.id = ''
+            this.tempId = '';
+            console.log('bu nerede başliyor?');
         },
 
     }
